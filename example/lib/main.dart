@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
           child: Column(
             children: [
               SimpleJsonForm(
+                onChange: ({required answer}) => print(answer),
                 jsonSchema: sampleData,
                 title: "EVALUACION DE DESEMPEÑO DEL PERSONAL EMBARCADO",
                 titleStyle: const TextStyle(

@@ -2,20 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_json_form/simple_json_form.dart';
 import 'package:simple_json_form/src/controller/simple_json_form_controller.dart';
+import 'package:simple_json_form/src/model/simple_json_form_field_answer.dart';
 import 'package:simple_json_form/src/utils/constants.dart';
 import 'package:simple_json_form/src/utils/form.dart';
 import 'package:simple_json_form/src/utils/responsive.dart';
 import 'package:simple_json_form/src/utils/utils.dart';
 import 'package:simple_json_form/src/widgets/input_text.dart';
 
+typedef OnChange = Function({
+  required SimpleJsonFormFieldAnswer answer,
+});
+
 class SimpleJsonFormField extends StatefulWidget {
   const SimpleJsonFormField({
     Key? key,
     required this.properties,
     required this.imageUrl,
-    required this.hintDropdownText,
     this.descriptionStyleText,
     this.titleStyleText,
+    required this.hintDropdownText,
+    required this.onChange,
   }) : super(key: key);
 
   final Properties properties;
@@ -23,6 +29,7 @@ class SimpleJsonFormField extends StatefulWidget {
   final TextStyle? descriptionStyleText;
   final TextStyle? titleStyleText;
   final String hintDropdownText;
+  final OnChange? onChange;
 
   @override
   State<SimpleJsonFormField> createState() => _SimpleJsonFormFieldState();
@@ -69,6 +76,14 @@ class _SimpleJsonFormFieldState extends State<SimpleJsonFormField> {
                 ),
                 onChanged: (value) {
                   widget.properties.answer = value;
+                  if (widget.onChange != null) {
+                    final answer = SimpleJsonFormFieldAnswer(
+                      title: widget.properties.title,
+                      answer: [value as String],
+                      key: widget.properties.key,
+                    );
+                    widget.onChange!(answer: answer);
+                  }
                   setState(() {});
                 },
               ),
@@ -113,10 +128,11 @@ class _SimpleJsonFormFieldState extends State<SimpleJsonFormField> {
                 iconEnabledColor: Constants.lightBlueColor,
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Constants.lightBlueColor, width: 0.0),
+                    borderSide:
+                        BorderSide(color: Constants.lightBlueColor, width: 0.0),
                   ),
-                  border:
-                      OutlineInputBorder(borderSide: BorderSide(color: Constants.lightBlueColor)),
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Constants.lightBlueColor)),
                 ),
                 hint: Text(widget.hintDropdownText),
                 items: widget.properties.fields!.map(
@@ -173,17 +189,39 @@ class _SimpleJsonFormFieldState extends State<SimpleJsonFormField> {
                 title: Text(
                   entry,
                   style: TextStyle(
-                    color:
-                        widget.properties.answer[widget.properties.fields!.indexOf(entry)] != true
-                            ? Colors.grey
-                            : Colors.black,
+                    color: widget.properties.answer[
+                                widget.properties.fields!.indexOf(entry)] !=
+                            true
+                        ? Colors.grey
+                        : Colors.black,
                     fontWeight: FontWeight.normal,
                     fontSize: Responsive.of(context).dp(1.8),
                   ),
                 ),
-                value: widget.properties.answer[widget.properties.fields!.indexOf(entry)],
+                value: widget.properties
+                    .answer[widget.properties.fields!.indexOf(entry)],
                 onChanged: (value) {
-                  widget.properties.answer[widget.properties.fields!.indexOf(entry)] = value;
+                  widget.properties
+                      .answer[widget.properties.fields!.indexOf(entry)] = value;
+
+                  final answers = widget.properties.answer as List<bool>;
+                  final fields = widget.properties.fields!;
+
+                  final answer = SimpleJsonFormFieldAnswer(
+                    title: widget.properties.title,
+                    answer: answers
+                        .asMap()
+                        .entries
+                        .where((element) => element.value)
+                        .map((e) => fields[e.key])
+                        .toList(),
+                    key: widget.properties.key,
+                  );
+
+                  if (widget.onChange != null) {
+                    widget.onChange!(answer: answer);
+                  }
+
                   setState(() {});
                 },
               ),
@@ -197,7 +235,8 @@ class _SimpleJsonFormFieldState extends State<SimpleJsonFormField> {
         );
 
       case JsonSchemaType.time:
-        final controller = SimpleJsonFormController.getKeyController(widget.properties.key);
+        final controller =
+            SimpleJsonFormController.getKeyController(widget.properties.key);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -215,7 +254,8 @@ class _SimpleJsonFormFieldState extends State<SimpleJsonFormField> {
                           value,
                           widget.properties.validations?.length.min ?? 1,
                           widget.properties.validations?.length.max ?? 100,
-                          widget.properties.validations?.message ?? 'Field is required',
+                          widget.properties.validations?.message ??
+                              'Field is required',
                         )
                     : null,
                 labelText: widget.properties.description,
@@ -235,7 +275,8 @@ class _SimpleJsonFormFieldState extends State<SimpleJsonFormField> {
         );
 
       case JsonSchemaType.date:
-        final controller = SimpleJsonFormController.getKeyController(widget.properties.key);
+        final controller =
+            SimpleJsonFormController.getKeyController(widget.properties.key);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -253,7 +294,8 @@ class _SimpleJsonFormFieldState extends State<SimpleJsonFormField> {
                           value,
                           widget.properties.validations?.length.min ?? 1,
                           widget.properties.validations?.length.max ?? 100,
-                          widget.properties.validations?.message ?? 'Field is required',
+                          widget.properties.validations?.message ??
+                              'Field is required',
                         )
                     : null,
                 labelText: widget.properties.description,
@@ -357,7 +399,8 @@ class _SimpleJsonFormFieldState extends State<SimpleJsonFormField> {
         );
 
       case JsonSchemaType.number:
-        final controller = SimpleJsonFormController.getKeyController(widget.properties.key);
+        final controller =
+            SimpleJsonFormController.getKeyController(widget.properties.key);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -374,7 +417,8 @@ class _SimpleJsonFormFieldState extends State<SimpleJsonFormField> {
                           value,
                           widget.properties.validations?.length.min ?? 1,
                           widget.properties.validations?.length.max ?? 100,
-                          widget.properties.validations?.message ?? 'Field is required',
+                          widget.properties.validations?.message ??
+                              'Field is required',
                         )
                     : null,
                 labelText: widget.properties.description,
@@ -397,7 +441,8 @@ class _SimpleJsonFormFieldState extends State<SimpleJsonFormField> {
         );
 
       case JsonSchemaType.text:
-        final controller = SimpleJsonFormController.getKeyController(widget.properties.key);
+        final controller =
+            SimpleJsonFormController.getKeyController(widget.properties.key);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -413,7 +458,8 @@ class _SimpleJsonFormFieldState extends State<SimpleJsonFormField> {
                           value,
                           widget.properties.validations?.length.min ?? 1,
                           widget.properties.validations?.length.max ?? 100,
-                          widget.properties.validations?.message ?? 'Field is required',
+                          widget.properties.validations?.message ??
+                              'Field is required',
                         )
                     : null,
                 labelText: widget.properties.description,
@@ -423,6 +469,14 @@ class _SimpleJsonFormFieldState extends State<SimpleJsonFormField> {
                 onChanged: (value) {
                   //setState(() {
                   widget.properties.answer = value;
+                  if (widget.onChange != null) {
+                    final answer = SimpleJsonFormFieldAnswer(
+                      title: widget.properties.title,
+                      answer: [value],
+                      key: widget.properties.key,
+                    );
+                    widget.onChange!(answer: answer);
+                  }
                   //});
                 },
               ),
@@ -448,6 +502,7 @@ class _SimpleJsonFormFieldState extends State<SimpleJsonFormField> {
               descriptionStyleText: widget.descriptionStyleText,
               titleStyleText: widget.titleStyleText,
               hintDropdownText: widget.hintDropdownText,
+              onChange: widget.onChange,
             ));
           }
           widgetFormat1.add(

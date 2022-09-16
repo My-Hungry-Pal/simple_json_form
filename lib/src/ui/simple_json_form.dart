@@ -51,6 +51,9 @@ class SimpleJsonForm extends StatefulWidget {
   //description to use style text description widget form
   final TextStyle? titleStyleText;
 
+  //description to use when the form is changed
+  final OnChange? onChange;
+
   const SimpleJsonForm({
     Key? key,
     required this.jsonSchema,
@@ -67,6 +70,7 @@ class SimpleJsonForm extends StatefulWidget {
     this.loading,
     this.descriptionStyleText,
     this.titleStyleText,
+    required this.onChange,
   }) : super(key: key);
 
   @override
@@ -121,6 +125,7 @@ class _SimpleJsonFormState extends State<SimpleJsonForm> {
                               descriptionStyleText: widget.descriptionStyleText,
                               titleStyleText: widget.titleStyleText,
                               hintDropdownText: defaultValues.hintDropdownText,
+                              onChange: widget.onChange,
                             ),
                           )
                           .toList(),
