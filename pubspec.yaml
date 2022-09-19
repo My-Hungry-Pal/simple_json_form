@@ -6,8 +6,8 @@ homepage: https://www.codesfirst.com/
 repository: https://github.com/CodesFirst/simple_json_form
 
 environment:
-  sdk: ">=2.17.1 <3.0.0"
-  flutter: ">=1.17.0"
+  sdk: '>=2.18.0 <3.0.0'
+  flutter: '>=1.17.0'
 
 dependencies:
   flutter:
