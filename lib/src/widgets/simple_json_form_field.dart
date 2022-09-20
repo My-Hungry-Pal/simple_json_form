@@ -469,14 +469,14 @@ class _SimpleJsonFormFieldState extends State<SimpleJsonFormField> {
                 onChanged: (value) {
                   //setState(() {
                   widget.properties.answer = value;
-                  if (widget.onChange != null) {
-                    final answer = SimpleJsonFormFieldAnswer(
-                      title: widget.properties.title,
-                      answer: [value],
-                      key: widget.properties.key,
-                    );
-                    widget.onChange!(answer: answer);
-                  }
+                  // if (widget.onChange != null) {
+                  //   final answer = SimpleJsonFormFieldAnswer(
+                  //     title: widget.properties.title,
+                  //     answer: [value],
+                  //     key: widget.properties.key,
+                  //   );
+                  //   widget.onChange!(answer: answer);
+                  // }
                   //});
                 },
               ),
